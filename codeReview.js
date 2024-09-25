@@ -1,59 +1,56 @@
-/**
- * Given a list of numbers, find the indices
- * of each local minimum and maximum
- */
-function findLocalMinMax(input) {
-    const arr = [];
+/*
+* Given a list of numbers, find the indices
+* of each local minimum and maximum (x1, x2, x3, x4)
+* If the first point or last point in the graph are not equal to their neighbor,
+* they are a local min or max
+* Saddle points are a min/max, but the middle values in a series of equal numbers
+* are not mins/maxes
+*/
+function findLocalMinMax(inputArr) {
+   const minsAndMaxes = [];
 
-    // keep track of the direction: down vs up
-    var direction = 0;
-    var prevEqual;
+   // keep track of the direction: down vs up
+   let currDirection, nextDirection, prevEqual;
+   if(inputArr.length < 2){
+       return inputArr;
+   }
+  
+   currDirection = determineDirection(inputArr[0], inputArr[1]);
 
-    // if 0th != 1st, 0th is a local min / max
-    if (input[0] !== input[1]) {
-        arr.push(0);
-        if (input[0] == input[1]) {
-            direction = 0;
-        }
-        if (input[0] < input[1]) {
-            direction = -1;
-        }
-        else{
-            direction = 1;
-        }
-        prevEqual = false;
-    }
+   // if 0th != 1st, 0th is a local min / max
+   if (currDirection !== Direction.FLAT) {
+       minsAndMaxes.push(0);
+       prevEqual = false;
+   }
 
-    // loop through other numbers
-    for (let i = 0; i < input.length - 1; i++) {
-        // compare this to next
-        const next = 1;
-        if (input[i] == input[i+1]) {
-            next = 0;
-        }
-        if (input[i] < input[i+1]) {
-            next = -1;
-        }
-        else{
-            next = 1;
-        }
+   // loop through other numbers
+   for (let i = 1; i < inputArr.length - 1; i++) {
+       // compare this to next to determine direction of next item
+       nextDirection = determineDirection(inputArr[i], inputArr[i+1])
 
-        if (next !== 0) {
-            if (next !== direction) {
-                direction = next;
+       if (nextDirection !=== currDirection) {
+           minsAndMaxes.push(i);
+       }
+   }
 
-                if (!prevEqual) {
-                    arr.push(i);
-                }
-            }
-            prevEqual = false;
-        } else if (!prevEqual) {
-            // if the previous value is different and the next are equal
-            // then we've found a min/max
-            prevEqual = true;
-            arr.push(i);
-        }
-    }
+   // Determine if last element is local min/max
+   if (nextDirection !== Direction.FLAT)
+       minsAndMaxes.push(i)
+   }
 
-    return arr;
+   return minsAndMaxes;
 }
+
+function determineDirection(a, b) {
+   return (a === b ? Direction.FLAT :
+       a < b ? Direction.INCREASING : Direction.DECREASING;
+}
+
+
+
+const Direction = Object.freeze({
+   INCREASING: 1,
+   FLAT: 0,
+   DECREASING: -1,
+});
+
