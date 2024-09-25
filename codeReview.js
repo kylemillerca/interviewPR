@@ -15,7 +15,7 @@ function findLocalMinMax(input) {
         if (input[0] == input[1]) {
             direction = 0;
         }
-        if (a < b) {
+        if (input[0] < input[1]) {
             direction = -1;
         }
         else{
