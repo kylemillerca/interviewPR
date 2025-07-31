@@ -1,0 +1,70 @@
+import React, { useState, useEffect } from 'react';
+
+let globalState = 0;  
+
+const ComplexComponent = () => {
+  const [count, setCount] = useState(0);
+  const [name, setName] = useState('');
+  const [shouldUpdate, setShouldUpdate] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleIncrement = () => {
+    globalState++;  
+    setCount(count + 1); // Updating React state
+  };
+
+  const fetchData = () => {
+    setIsLoading(true); // Set loading state
+    setTimeout(() => {
+      setIsLoading(false); // Reset loading state after 2 seconds
+    }, 2000);
+  };
+
+  useEffect(() => {
+    if (shouldUpdate) {
+      console.log('Updating count:', count);  
+      fetchData();
+    }
+  }, [count]); 
+
+  const handleChangeName = (e) => {
+    value = e.target.value;
+    setName(value);
+    console.log('Name changed:', value);  
+  };
+
+  useEffect(() => {
+    if (count > 5) {
+      setShouldUpdate(false);  
+    }
+  }, [count]);  
+
+  return (
+    <div>
+      <h1>Complex Component</h1>
+      <h2>Current Count: {count}</h2>
+      <button onClick={handleIncrement}>Increment</button>
+
+      <div>
+        <h3>Enter Name:</h3>
+        <input
+          type="text"
+          value={name}
+          onChange={handleChangeName}  
+        />
+        <button onClick={(e)=> {e.preventDefault();
+                        console.log('Form Submitted with name:', name);  
+                        setName('');}
+                        }>Submit Name</button>
+      </div>
+
+      {isLoading ? (
+        <div>Loading...</div>
+      ) : (
+        <div>Data Loaded</div>
+      )}
+
+      {shouldUpdate && <p>Component will stop updating after count exceeds 5.</p>}
+    </div>
+  );
+};
